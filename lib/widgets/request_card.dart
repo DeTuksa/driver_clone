@@ -1,6 +1,8 @@
 import 'package:driver_clone/global/screen_size.dart';
+import 'package:driver_clone/models/location_model.dart';
 import 'package:driver_clone/models/request_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RequestCard extends StatelessWidget {
   final Request request;
@@ -78,7 +80,12 @@ class RequestCard extends StatelessWidget {
                 width: width(context) * 0.6,
                 height: 45,
                 child: FlatButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await Provider.of<RequestModel>(context, listen: false)
+                        .acceptsTrip(request);
+                    Provider.of<LocationModel>(context, listen: false)
+                        .setMapMode(MapMode.AcceptedRequest);
+                  },
                   child: Text(
                     'ACCEPT RIDE',
                     style: TextStyle(

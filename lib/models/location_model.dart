@@ -1,6 +1,8 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driver_clone/models/auth_model.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class LocationModel extends ChangeNotifier {
@@ -9,9 +11,17 @@ class LocationModel extends ChangeNotifier {
   PermissionStatus permissionGranted;
   LocationData currentLocation;
   Timer timer;
+  MapMode mapMode = MapMode.WaitingForRequests;
 
   LocationModel() {
     setLocation();
+  }
+
+  void setMapMode(MapMode mode) {
+    if (mode == MapMode.AcceptedRequest) {
+      mapMode = mode;
+      notifyListeners();
+    }
   }
 
   void setLocation() async {
@@ -36,13 +46,34 @@ class LocationModel extends ChangeNotifier {
 
     //get current user location
     currentLocation = await location.getLocation();
+    updateLiveLocation(
+        LatLng(currentLocation.latitude, currentLocation.longitude));
     notifyListeners();
 
     //update user location as it changes
-    timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    timer = Timer.periodic(Duration(seconds: 15), (timer) async {
       print("updating location");
       currentLocation = await location.getLocation();
       notifyListeners();
+      if (globalUserDetails != null && globalUser != null) {
+        if (globalUserDetails.firstName != "" &&
+            globalUserDetails.lastName != "" &&
+            globalUserDetails.isOnline == true) {
+          updateLiveLocation(
+              LatLng(currentLocation.latitude, currentLocation.longitude));
+        }
+      }
+    });
+  }
+
+  Future<void> updateLiveLocation(LatLng location) async {
+    Firestore.instance
+        .collection("drivers")
+        .document(globalUser.uid)
+        .updateData({
+      "liveLocation": [location.latitude, location.longitude]
     });
   }
 }
+
+enum MapMode { WaitingForRequests, AcceptedRequest }
