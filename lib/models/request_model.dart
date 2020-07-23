@@ -11,6 +11,11 @@ class RequestModel extends ChangeNotifier {
           pickupInfo: Place(formattedAddress: "Kabusa,Lokogoma, Abuja")));
     }
   }
+  void removeRequest(int index) {
+    requests.removeAt(index);
+    notifyListeners();
+    print("request removed");
+  }
 }
 
 class Request {

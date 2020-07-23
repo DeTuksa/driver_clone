@@ -80,7 +80,7 @@ class RequestCard extends StatelessWidget {
                 child: FlatButton(
                   onPressed: () {},
                   child: Text(
-                    'CONFIRM PICK-UP',
+                    'ACCEPT RIDE',
                     style: TextStyle(
                       color: Colors.white,
                     ),
