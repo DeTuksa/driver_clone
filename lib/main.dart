@@ -45,6 +45,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GoogleMapController mapController;
+  CardController swipeController;
   @override
   Widget build(BuildContext context) {
     double iconSize = 30;
@@ -169,6 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: TinderSwapCard(
                                   swipeUp: false,
                                   swipeDown: false,
+                                  cardController: swipeController,
                                   allowVerticalMovement: false,
                                   orientation: AmassOrientation.BOTTOM,
                                   maxWidth:
@@ -185,8 +187,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                     );
                                   },
                                   stackNum: 3,
-                                  swipeCompleteCallback:
-                                      (orientation, index) {},
+                                  swipeCompleteCallback: (orientation, index) {
+                                    if (orientation ==
+                                            CardSwipeOrientation.LEFT ||
+                                        orientation ==
+                                            CardSwipeOrientation.RIGHT) {
+                                      print("swiped");
+                                      requestModel.removeRequest(index);
+                                    }
+                                  },
                                   totalNum: requestModel.requests.length),
                             );
                           },
