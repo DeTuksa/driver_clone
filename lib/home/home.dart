@@ -1,3 +1,4 @@
+import 'package:driver_clone/global/screen_size.dart';
 import 'package:driver_clone/home/drawer_option.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:driver_clone/models/location_model.dart';
@@ -5,6 +6,7 @@ import 'package:driver_clone/models/request_model.dart';
 import 'package:driver_clone/widgets/NavCenterButton.dart';
 import 'package:driver_clone/widgets/online_toggle_button.dart';
 import 'package:driver_clone/widgets/request_card.dart';
+import 'package:driver_clone/widgets/rider_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -144,46 +146,62 @@ class _HomePageState extends State<HomePage> {
                       alignment: Alignment.bottomRight,
                       child: Padding(
                         padding: EdgeInsets.all(1),
-                        child: Consumer<RequestModel>(
-                          builder: (context, requestModel, _) {
-                            if (requestModel.requests.length == 0) {
-                              return Container(height: 0, width: 0);
-                            }
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: TinderSwapCard(
-                                  swipeUp: false,
-                                  swipeDown: false,
-                                  cardController: swipeController,
-                                  allowVerticalMovement: false,
-                                  orientation: AmassOrientation.BOTTOM,
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  maxHeight:
-                                      MediaQuery.of(context).size.width * 0.65,
-                                  minWidth:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  minHeight:
-                                      MediaQuery.of(context).size.width * 0.55,
-                                  cardBuilder: (context, index) {
-                                    return RequestCard(
-                                      request: requestModel.requests[index],
-                                    );
-                                  },
-                                  stackNum: 3,
-                                  swipeCompleteCallback: (orientation, index) {
-                                    if (orientation ==
-                                            CardSwipeOrientation.LEFT ||
-                                        orientation ==
-                                            CardSwipeOrientation.RIGHT) {
-                                      print("swiped");
-                                      requestModel.removeRequest(index);
-                                    }
-                                  },
-                                  totalNum: requestModel.requests.length),
-                            );
-                          },
-                        ),
+                        child: locationModel.mapMode ==
+                                MapMode.WaitingForRequests
+                            ? Consumer<RequestModel>(
+                                builder: (context, requestModel, _) {
+                                  if (requestModel.requests.length == 0) {
+                                    return Container(height: 0, width: 0);
+                                  }
+                                  return Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    child: TinderSwapCard(
+                                        swipeUp: false,
+                                        swipeDown: false,
+                                        cardController: swipeController,
+                                        allowVerticalMovement: false,
+                                        orientation: AmassOrientation.BOTTOM,
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.9,
+                                        maxHeight:
+                                            MediaQuery.of(context).size.width *
+                                                0.65,
+                                        minWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.8,
+                                        minHeight:
+                                            MediaQuery.of(context).size.width *
+                                                0.55,
+                                        cardBuilder: (context, index) {
+                                          return RequestCard(
+                                            request:
+                                                requestModel.requests[index],
+                                          );
+                                        },
+                                        stackNum: 3,
+                                        swipeCompleteCallback:
+                                            (orientation, index) {
+                                          if (orientation ==
+                                                  CardSwipeOrientation.LEFT ||
+                                              orientation ==
+                                                  CardSwipeOrientation.RIGHT) {
+                                            print("swiped");
+                                            requestModel.removeRequest(index);
+                                          }
+                                        },
+                                        totalNum: requestModel.requests.length),
+                                  );
+                                },
+                              )
+                            : Consumer<RequestModel>(
+                                builder: (context, requestModel, _) {
+                                  return RiderInfo(
+                                    request: requestModel.currentTrip,
+                                  );
+                                },
+                              ),
                       ),
                     )
                   ],

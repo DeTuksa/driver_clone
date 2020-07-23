@@ -4,6 +4,9 @@ import 'package:driver_clone/models/request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+FirebaseUser globalUser;
+UserDetails globalUserDetails;
+
 class AuthModel extends ChangeNotifier {
   FirebaseUser user;
   UserDetails userDetails;
@@ -15,11 +18,13 @@ class AuthModel extends ChangeNotifier {
   AuthModel() {
     authStateStream = FirebaseAuth.instance.onAuthStateChanged.listen((user) {
       this.user = user;
+      globalUser = user;
       notifyListeners();
       try {
         if (user != null) {
           userDetailsSub = _getUserDetails().asStream().listen((val) {
             userDetails = val;
+            globalUserDetails = val;
             notifyListeners();
           });
         }
@@ -62,14 +67,20 @@ class AuthModel extends ChangeNotifier {
 
   Future<bool> updateFirstName(String firstName) async {
     try {
-      await Firestore.instance.collection("drivers").document(user.uid).setData(
-          {"firstName": firstName, "phoneNumber": user.phoneNumber},
-          merge: true).catchError((err) {
+      await Firestore.instance
+          .collection("drivers")
+          .document(user.uid)
+          .setData({
+        "firstName": firstName,
+        "phoneNumber": user.phoneNumber,
+        "driverId": user.uid
+      }, merge: true).catchError((err) {
         print(err);
         return false;
       });
       userDetailsSub = _getUserDetails().asStream().listen((val) {
         userDetails = val;
+        globalUserDetails = val;
         notifyListeners();
       });
     } catch (err) {
@@ -81,13 +92,19 @@ class AuthModel extends ChangeNotifier {
 
   Future<bool> updateLastName(String lastName) async {
     try {
-      await Firestore.instance.collection("drivers").document(user.uid).setData(
-          {"lastName": lastName, "phoneNumber": user.phoneNumber},
-          merge: true).catchError((err) {
+      await Firestore.instance
+          .collection("drivers")
+          .document(user.uid)
+          .setData({
+        "lastName": lastName,
+        "phoneNumber": user.phoneNumber,
+        "driverId": user.uid
+      }, merge: true).catchError((err) {
         return false;
       });
       userDetailsSub = _getUserDetails().asStream().listen((val) {
         userDetails = val;
+        globalUserDetails = val;
         notifyListeners();
       });
     } catch (err) {
