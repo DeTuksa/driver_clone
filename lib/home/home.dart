@@ -1,7 +1,9 @@
 import 'package:driver_clone/home/drawer_option.dart';
+import 'package:driver_clone/models/auth_model.dart';
 import 'package:driver_clone/models/location_model.dart';
 import 'package:driver_clone/models/request_model.dart';
 import 'package:driver_clone/widgets/NavCenterButton.dart';
+import 'package:driver_clone/widgets/online_toggle_button.dart';
 import 'package:driver_clone/widgets/request_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
@@ -29,37 +31,39 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          color: Colors.blue[700],
-          child: Padding(
-            padding: EdgeInsets.all(5),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(
-                  width: 15,
-                ),
-                Text(
-                  "Online",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                CircleAvatar(
-                  child: Icon(
-                    Icons.directions_car,
-                    size: 18,
-                  ),
-                  backgroundColor: Colors.white,
-                  radius: 15,
-                )
-              ],
-            ),
-          ),
+        title: Consumer<AuthModel>(
+          builder: (context, authModel, _) {
+            Widget alternate = GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "edit_account",
+                    arguments: "You have to setup your account");
+              },
+              child: ToggleOnline(
+                isInitiallyOffline: true,
+              ),
+            );
+            if (authModel.userDetails == null) {
+              return alternate;
+            }
+
+            if (authModel.userDetails.firstName == "" ||
+                authModel.userDetails.lastName == "") {
+              return alternate;
+            }
+
+            bool isOffline = true;
+            if (authModel.userDetails.isOnline == false ||
+                authModel.userDetails.isOnline == null) {
+              isOffline = true;
+            } else {
+              isOffline = false;
+            }
+            return ToggleOnline(
+              isInitiallyOffline: isOffline,
+              onOffline: () => authModel.setOnlineStatus(false),
+              onOnline: () => authModel.setOnlineStatus(true),
+            );
+          },
         ),
         leading: Center(
           child: GestureDetector(

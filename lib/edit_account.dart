@@ -16,6 +16,7 @@ class _EditAccountState extends State<EditAccount> {
   TextEditingController phoneController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
+    String title = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -38,7 +39,7 @@ class _EditAccountState extends State<EditAccount> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
               title: Text(
-                'Edit Account',
+                title != null && title != "" ? title : 'Edit Account',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),

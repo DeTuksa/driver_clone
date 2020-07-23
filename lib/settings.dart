@@ -69,59 +69,6 @@ class _SettingsState extends State<Settings> {
             padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.03,
                 left: MediaQuery.of(context).size.height * 0.02),
-            child: Text("Favourites"),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.03,
-                left: MediaQuery.of(context).size.height * 0.02),
-            child: GestureDetector(
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.home),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.height * 0.02),
-                    child: Text("Add Home"),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.03,
-                left: MediaQuery.of(context).size.height * 0.02),
-            child: GestureDetector(
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.work),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.height * 0.02),
-                    child: Text("Add Work"),
-                  )
-                ],
-              ),
-            ),
-          ),
-          GestureDetector(
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.03,
-                  left: MediaQuery.of(context).size.height * 0.02,
-                  bottom: MediaQuery.of(context).size.height * 0.03),
-              child: Text("More saved places",
-                  style: TextStyle(color: Colors.indigo)),
-            ),
-          ),
-          Divider(
-            color: Colors.grey,
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.03,
-                left: MediaQuery.of(context).size.height * 0.02),
             child: Text("Safety"),
           ),
           Padding(
@@ -157,34 +104,6 @@ class _SettingsState extends State<Settings> {
                 ],
               ),
             ),
-          ),
-          Divider(
-            color: Colors.grey,
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.03,
-                left: MediaQuery.of(context).size.height * 0.02,
-                bottom: MediaQuery.of(context).size.height * 0.03),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("Family"),
-                  GestureDetector(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, bottom: 8),
-                          child: Text("Set up your family",
-                              style: TextStyle(color: Colors.indigo)),
-                        ),
-                        Text(
-                            "Pay for your loved ones and get trip notifications")
-                      ],
-                    ),
-                  )
-                ]),
           ),
           Divider(
             color: Colors.grey,

@@ -29,6 +29,18 @@ class AuthModel extends ChangeNotifier {
     });
   }
 
+  Future<bool> setOnlineStatus(bool status) async {
+    try {
+      await Firestore.instance
+          .collection("drivers")
+          .document(user.uid)
+          .setData({"isOnline": status}, merge: true);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   Future<bool> saveAddress(Place place) async {
     try {
       await Firestore.instance
@@ -220,14 +232,20 @@ class UserDetails {
   String firstName;
   String lastName;
   String phoneNumber;
+  bool isOnline;
 
-  UserDetails({this.phoneNumber = "", this.lastName = "", this.firstName = ""});
+  UserDetails(
+      {this.phoneNumber = "",
+      this.lastName = "",
+      this.firstName = "",
+      this.isOnline});
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
     return UserDetails(
         firstName: json['firstName'],
         lastName: json['lastName'],
-        phoneNumber: json['phoneNumber']);
+        phoneNumber: json['phoneNumber'],
+        isOnline: json['isOnline']);
   }
 }
 
