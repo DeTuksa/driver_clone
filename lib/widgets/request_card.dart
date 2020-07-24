@@ -1,5 +1,4 @@
 import 'package:driver_clone/global/screen_size.dart';
-import 'package:driver_clone/models/location_model.dart';
 import 'package:driver_clone/models/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -83,8 +82,6 @@ class TripCard extends StatelessWidget {
                   onPressed: () async {
                     await Provider.of<TripModel>(context, listen: false)
                         .acceptsTrip(trip);
-                    Provider.of<LocationModel>(context, listen: false)
-                        .setMapMode(MapMode.AcceptedRequest);
                   },
                   child: Text(
                     'ACCEPT RIDE',
