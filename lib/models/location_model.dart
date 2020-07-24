@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
+LocationData globalCurrentLocation;
 class LocationModel extends ChangeNotifier {
   Location location = new Location();
   bool serviceEnabled;
@@ -38,6 +39,7 @@ class LocationModel extends ChangeNotifier {
 
     //get current user location
     currentLocation = await location.getLocation();
+    globalCurrentLocation=currentLocation;
     updateLiveLocation(
         LatLng(currentLocation.latitude, currentLocation.longitude));
     notifyListeners();
@@ -46,6 +48,7 @@ class LocationModel extends ChangeNotifier {
     timer = Timer.periodic(Duration(seconds: 15), (timer) async {
       print("updating location");
       currentLocation = await location.getLocation();
+      globalCurrentLocation=currentLocation;
       notifyListeners();
       if (globalUserDetails != null && globalUser != null) {
         if (globalUserDetails.firstName != "" &&
