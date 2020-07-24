@@ -1,10 +1,10 @@
 import 'package:driver_clone/global/screen_size.dart';
-import 'package:driver_clone/models/request_model.dart';
+import 'package:driver_clone/models/trip_model.dart';
 import 'package:flutter/material.dart';
 
 class RiderInfo extends StatelessWidget {
-  final Request request;
-  RiderInfo({this.request});
+  final Trip trip;
+  RiderInfo({this.trip});
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -1,8 +1,7 @@
-import 'package:driver_clone/global/screen_size.dart';
 import 'package:driver_clone/home/drawer_option.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:driver_clone/models/location_model.dart';
-import 'package:driver_clone/models/request_model.dart';
+import 'package:driver_clone/models/trip_model.dart';
 import 'package:driver_clone/widgets/NavCenterButton.dart';
 import 'package:driver_clone/widgets/online_toggle_button.dart';
 import 'package:driver_clone/widgets/request_card.dart';
@@ -120,13 +119,12 @@ class _HomePageState extends State<HomePage> {
                       myLocationButtonEnabled: false,
                     ),
                     Align(
-                      alignment:
-                          Provider.of<RequestModel>(context, listen: true)
-                                      .requests
-                                      .length ==
-                                  0
-                              ? Alignment.bottomRight
-                              : Alignment.topRight,
+                      alignment: Provider.of<TripModel>(context, listen: true)
+                                  .requests
+                                  .length ==
+                              0
+                          ? Alignment.bottomRight
+                          : Alignment.topRight,
                       child: Padding(
                         padding: EdgeInsets.all(15),
                         child: NavCenterButton(
@@ -145,64 +143,61 @@ class _HomePageState extends State<HomePage> {
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
-                        padding: EdgeInsets.all(1),
-                        child: locationModel.mapMode ==
-                                MapMode.WaitingForRequests
-                            ? Consumer<RequestModel>(
-                                builder: (context, requestModel, _) {
-                                  if (requestModel.requests.length == 0) {
-                                    return Container(height: 0, width: 0);
-                                  }
-                                  return Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.5,
-                                    child: TinderSwapCard(
-                                        swipeUp: false,
-                                        swipeDown: false,
-                                        cardController: swipeController,
-                                        allowVerticalMovement: false,
-                                        orientation: AmassOrientation.BOTTOM,
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        maxHeight:
-                                            MediaQuery.of(context).size.width *
-                                                0.65,
-                                        minWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        minHeight:
-                                            MediaQuery.of(context).size.width *
-                                                0.55,
-                                        cardBuilder: (context, index) {
-                                          return RequestCard(
-                                            request:
-                                                requestModel.requests[index],
-                                          );
-                                        },
-                                        stackNum: 3,
-                                        swipeCompleteCallback:
-                                            (orientation, index) {
-                                          if (orientation ==
-                                                  CardSwipeOrientation.LEFT ||
-                                              orientation ==
-                                                  CardSwipeOrientation.RIGHT) {
-                                            print("swiped");
-                                            requestModel.removeRequest(index);
-                                          }
-                                        },
-                                        totalNum: requestModel.requests.length),
-                                  );
-                                },
-                              )
-                            : Consumer<RequestModel>(
-                                builder: (context, requestModel, _) {
-                                  return RiderInfo(
-                                    request: requestModel.currentTrip,
-                                  );
-                                },
-                              ),
-                      ),
+                          padding: EdgeInsets.all(1),
+                          child: Consumer<TripModel>(
+                            builder: (context, tripModel, _) {
+                              if (tripModel.requests.length == 0) {
+                                return Container(height: 0, width: 0);
+                              }
+
+                              if (tripModel.currentTrip != null) {
+                                return Consumer<TripModel>(
+                                  builder: (context, tripModel, _) {
+                                    return RiderInfo(
+                                      trip: tripModel.currentTrip,
+                                    );
+                                  },
+                                );
+                              }
+                              return Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
+                                child: TinderSwapCard(
+                                    swipeUp: false,
+                                    swipeDown: false,
+                                    cardController: swipeController,
+                                    allowVerticalMovement: false,
+                                    orientation: AmassOrientation.BOTTOM,
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width * 0.9,
+                                    maxHeight:
+                                        MediaQuery.of(context).size.width *
+                                            0.65,
+                                    minWidth:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    minHeight:
+                                        MediaQuery.of(context).size.width *
+                                            0.55,
+                                    cardBuilder: (context, index) {
+                                      return TripCard(
+                                        trip: tripModel.requests[index],
+                                      );
+                                    },
+                                    stackNum: 3,
+                                    swipeCompleteCallback:
+                                        (orientation, index) {
+                                      if (orientation ==
+                                              CardSwipeOrientation.LEFT ||
+                                          orientation ==
+                                              CardSwipeOrientation.RIGHT) {
+                                        print("swiped");
+                                        tripModel.removeRequest(index);
+                                      }
+                                    },
+                                    totalNum: tripModel.requests.length),
+                              );
+                            },
+                          )),
                     )
                   ],
                 );

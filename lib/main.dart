@@ -4,7 +4,7 @@ import 'package:driver_clone/get_moving.dart';
 import 'package:driver_clone/home/home.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:driver_clone/models/location_model.dart';
-import 'package:driver_clone/models/request_model.dart';
+import 'package:driver_clone/models/trip_model.dart';
 import 'package:driver_clone/phone_verification.dart';
 import 'package:driver_clone/phonenumber.dart';
 import 'package:driver_clone/settings.dart';
@@ -24,7 +24,7 @@ void main() {
         create: (context) => LocationModel(),
       ),
       ChangeNotifierProvider(
-        create: (context) => RequestModel(),
+        create: (context) => TripModel(),
       ),
       ChangeNotifierProvider(
         create: (context) => AuthModel(),
