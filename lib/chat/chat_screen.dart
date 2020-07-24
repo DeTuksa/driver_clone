@@ -11,14 +11,12 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   Trip trip;
   TextEditingController controller = TextEditingController();
   ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     trip = arguments["trip"];
 
@@ -67,29 +65,31 @@ class _ChatScreenState extends State<ChatScreen> {
                           topRight: Radius.circular(24))),
                   width: width(context),
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: Firestore.instance.collection("users")
-                    .document(trip.riderId).collection('messages').orderBy('timestamp', descending: false)
-                    .snapshots(),
+                    stream: Firestore.instance
+                        .collection("users")
+                        .document(trip.riderId)
+                        .collection('messages')
+                        .orderBy('timestamp', descending: false)
+                        .snapshots(),
                     builder: (BuildContext context, snapshot) {
-
-                      if(!snapshot.hasData)
+                      if (!snapshot.hasData)
                         return Center(
                           child: CircularProgressIndicator(),
                         );
 
                       List<DocumentSnapshot> docs = snapshot.data.documents;
 
-                      List<Widget> chatMessages = docs.map((e) => MessageWidget(
-                        from: e.data['fromName'],
-                        message: e.data['message'],
-                        person: trip.riderId != e.data['fromId'],
-                      )).toList();
+                      List<Widget> chatMessages = docs
+                          .map((e) => MessageWidget(
+                                from: e.data['fromName'],
+                                message: e.data['message'],
+                                person: trip.riderId != e.data['fromId'],
+                              ))
+                          .toList();
 
                       return ListView(
                         controller: scrollController,
-                        children: <Widget>[
-                          ...chatMessages
-                        ],
+                        children: <Widget>[...chatMessages],
                       );
                     },
                   ),
@@ -146,20 +146,21 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> sendMessage() async {
-    if(controller.text.trim().length > 0) {
+    if (controller.text.trim().length > 0) {
       String message = controller.text.trim();
       controller.clear();
-      await Firestore.instance.collection("users")
-      .document(trip.riderId).collection("messages")
-      .add({
+      await Firestore.instance
+          .collection("users")
+          .document(trip.riderId)
+          .collection("messages")
+          .add({
         'message': message,
         'fromId': globalUser.uid,
         'timestamp': Timestamp.now()
       });
       print('sent');
       scrollController.animateTo(scrollController.position.minScrollExtent,
-          duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut);
+          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     }
   }
 }
