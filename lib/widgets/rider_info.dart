@@ -13,10 +13,23 @@ class RiderInfo extends StatelessWidget {
       width: width(context),
       color: Colors.white,
       child: Center(
-        child: Text(
-          "User info goes here. Forget about the info for now. just include a button that takes the driver to the chat page and work on it",
-          style: TextStyle(fontSize: 20),
-        ),
+        child: FlatButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24)
+          ),
+          child: Text('Go to Chats', style: TextStyle(
+            color: Colors.white
+          ),),
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+                "chat_screen",
+              arguments: {
+                  'trip': trip
+              }
+            );
+          },
+          color: Colors.black,
+        )
       ),
     );
   }

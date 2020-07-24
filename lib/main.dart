@@ -1,3 +1,4 @@
+import 'package:driver_clone/chat/chat_screen.dart';
 import 'package:driver_clone/discount.dart';
 import 'package:driver_clone/edit_account.dart';
 import 'package:driver_clone/get_moving.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
                 return HomePage();
               },
             ),
+        "chat_screen": (context) => ChatScreen()
       },
       initialRoute: "welcome_page",
     );
