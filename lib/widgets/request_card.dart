@@ -1,12 +1,12 @@
 import 'package:driver_clone/global/screen_size.dart';
 import 'package:driver_clone/models/location_model.dart';
-import 'package:driver_clone/models/request_model.dart';
+import 'package:driver_clone/models/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class RequestCard extends StatelessWidget {
-  final Request request;
-  RequestCard({this.request});
+class TripCard extends StatelessWidget {
+  final Trip trip;
+  TripCard({this.trip});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -30,14 +30,14 @@ class RequestCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          request.riderName,
+                          trip.riderName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          request.riderPhoneNumber,
+                          trip.riderPhone,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -66,7 +66,7 @@ class RequestCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        request.pickupInfo.formattedAddress,
+                        "Address placeholder",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -81,8 +81,8 @@ class RequestCard extends StatelessWidget {
                 height: 45,
                 child: FlatButton(
                   onPressed: () async {
-                    await Provider.of<RequestModel>(context, listen: false)
-                        .acceptsTrip(request);
+                    await Provider.of<TripModel>(context, listen: false)
+                        .acceptsTrip(trip);
                     Provider.of<LocationModel>(context, listen: false)
                         .setMapMode(MapMode.AcceptedRequest);
                   },

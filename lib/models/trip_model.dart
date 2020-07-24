@@ -3,12 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:flutter/material.dart';
 
-class RequestModel extends ChangeNotifier {
-  List<Request> requests = new List();
+class TripModel extends ChangeNotifier {
+  List<Trip> requests = new List();
   StreamSubscription requestsStream;
-  Request currentTrip;
+  StreamSubscription currentTripStream;
+  Trip currentTrip;
 
-  RequestModel() {
+  TripModel() {
     requestsStream = Firestore.instance
         .collection('drivers')
         .document(globalUser.uid)
@@ -17,8 +18,19 @@ class RequestModel extends ChangeNotifier {
         .listen((tripsSnapshot) {
       requests = new List();
       tripsSnapshot.documents.forEach((tripSnap) {
-        requests.add(Request.fromJson(tripSnap.data));
+        requests.add(Trip.fromJson(tripSnap.data));
       });
+      notifyListeners();
+    });
+
+    currentTripStream = Firestore.instance
+        .collection('drivers')
+        .document(globalUser.uid)
+        .collection('currentTrip')
+        .document('tripDetails')
+        .snapshots()
+        .listen((tripSnapshot) {
+      currentTrip = Trip.fromJson(tripSnapshot.data);
       notifyListeners();
     });
   }
@@ -30,49 +42,47 @@ class RequestModel extends ChangeNotifier {
 
   void cancelSubs() {
     requestsStream.cancel();
+    currentTripStream.cancel();
   }
 
-  Future<void> acceptsTrip(Request request) async {
+  Future<void> acceptsTrip(Trip trip) async {
     await Firestore.instance
         .collection("users")
-        .document(request.riderId)
+        .document(trip.riderId)
         .collection("currentTrip")
         .document("tripDetails")
         .setData({
       "driverId": globalUser.uid,
-      "firstName": globalUserDetails.firstName,
-      "lastName": globalUserDetails.lastName,
+      "driverName": globalUserDetails.firstName,
+      "driverPhone": globalUserDetails.phoneNumber,
     });
     await Firestore.instance
         .collection("drivers")
         .document(globalUser.uid)
         .collection('currentTrip')
         .document("tripDetails")
-        .setData({"riderName": request.riderName, "riderId": request.riderId});
-    currentTrip = request;
+        .setData({
+      "riderName": trip.riderName,
+      "riderId": trip.riderId,
+      "riderPhone": trip.riderPhone
+    });
     notifyListeners();
   }
 }
 
-class Request {
+class Trip {
   String riderName;
-  String riderPhoneNumber;
-  Place pickupInfo;
+  String riderPhone;
   String riderId;
 
-  Request(
-      {this.pickupInfo, this.riderName, this.riderPhoneNumber, this.riderId});
+  Trip({this.riderName, this.riderPhone, this.riderId});
 
-  factory Request.fromJson(Map<String, dynamic> json) {
-    return Request(
-        riderName: "${json['firstName']} ${json['lastName']}",
-        riderPhoneNumber: json['phoneNumber'],
-        riderId: json['riderId'],
-        pickupInfo: Place(
-          formattedAddress: json['destinationAddress'],
-          latitude: json['destinationCoords'][0],
-          longitude: json['destinationCoords'][1],
-        ));
+  factory Trip.fromJson(Map<String, dynamic> json) {
+    return Trip(
+      riderName: "${json['riderName']}",
+      riderPhone: json['riderPhone'],
+      riderId: json['riderId'],
+    );
   }
 }
 
