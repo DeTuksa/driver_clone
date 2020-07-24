@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver_clone/models/auth_model.dart';
+import 'package:driver_clone/models/location_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -70,6 +71,9 @@ class TripModel extends ChangeNotifier {
         trip.riderPickupCoords.latitude,
         trip.riderPickupCoords.longitude
       ],
+      "driverCoords":[
+        globalCurrentLocation.latitude,globalCurrentLocation.longitude
+      ]
     });
     await Firestore.instance
         .collection("drivers")
