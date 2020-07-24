@@ -13,7 +13,9 @@ import 'package:driver_clone/welcome_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
+import 'package:driver_clone/message_handler.dart' as myHandler;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +33,9 @@ void main() {
         create: (context) => AuthModel(),
       ),
     ],
-    child: MyApp(),
+    child: OverlaySupport(
+      child: MyApp(),
+    ),
   ));
 }
 
@@ -54,7 +58,7 @@ class MyApp extends StatelessWidget {
                 if (authModel.user == null) {
                   return WelcomePage(title: "Uber Clone");
                 }
-                return HomePage();
+                return myHandler.MessageHandler(child: HomePage());
               },
             ),
         "chat_screen": (context) => ChatScreen()
