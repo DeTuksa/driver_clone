@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TripModel extends ChangeNotifier {
   List<Trip> requests = new List();
@@ -18,7 +19,9 @@ class TripModel extends ChangeNotifier {
         .listen((tripsSnapshot) {
       requests = new List();
       tripsSnapshot.documents.forEach((tripSnap) {
-        requests.add(Trip.fromJson(tripSnap.data));
+        if (tripSnap.data != null) {
+          requests.add(Trip.fromJson(tripSnap.data));
+        }
       });
       notifyListeners();
     });
@@ -30,7 +33,11 @@ class TripModel extends ChangeNotifier {
         .document('tripDetails')
         .snapshots()
         .listen((tripSnapshot) {
-      currentTrip = Trip.fromJson(tripSnapshot.data);
+      if (tripSnapshot.data == null) {
+        currentTrip = null;
+      } else {
+        currentTrip = Trip.fromJson(tripSnapshot.data);
+      }
       notifyListeners();
     });
   }
@@ -55,6 +62,14 @@ class TripModel extends ChangeNotifier {
       "driverId": globalUser.uid,
       "driverName": globalUserDetails.firstName,
       "driverPhone": globalUserDetails.phoneNumber,
+      "destinationCoords": [
+        trip.riderDestinationCoords.latitude,
+        trip.riderDestinationCoords.longitude
+      ],
+      "pickupCoords": [
+        trip.riderPickupCoords.latitude,
+        trip.riderPickupCoords.longitude
+      ],
     });
     await Firestore.instance
         .collection("drivers")
@@ -64,7 +79,15 @@ class TripModel extends ChangeNotifier {
         .setData({
       "riderName": trip.riderName,
       "riderId": trip.riderId,
-      "riderPhone": trip.riderPhone
+      "riderPhone": trip.riderPhone,
+      "riderDestinationCoords": [
+        trip.riderDestinationCoords.latitude,
+        trip.riderDestinationCoords.longitude
+      ],
+      "riderPickupCoords": [
+        trip.riderPickupCoords.latitude,
+        trip.riderPickupCoords.longitude
+      ],
     });
     notifyListeners();
   }
@@ -74,14 +97,26 @@ class Trip {
   String riderName;
   String riderPhone;
   String riderId;
+  LatLng riderDestinationCoords;
+  LatLng riderPickupCoords;
 
-  Trip({this.riderName, this.riderPhone, this.riderId});
+  Trip(
+      {this.riderName,
+      this.riderPhone,
+      this.riderId,
+      this.riderDestinationCoords,
+      this.riderPickupCoords});
 
   factory Trip.fromJson(Map<String, dynamic> json) {
+    print(json);
     return Trip(
-      riderName: "${json['riderName']}",
+      riderName: json['riderName'],
       riderPhone: json['riderPhone'],
       riderId: json['riderId'],
+      riderDestinationCoords: LatLng(
+          json['riderDestinationCoords'][0], json['riderDestinationCoords'][1]),
+      riderPickupCoords:
+          LatLng(json['riderPickupCoords'][0], json['riderPickupCoords'][1]),
     );
   }
 }

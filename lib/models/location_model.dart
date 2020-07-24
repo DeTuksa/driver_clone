@@ -11,17 +11,9 @@ class LocationModel extends ChangeNotifier {
   PermissionStatus permissionGranted;
   LocationData currentLocation;
   Timer timer;
-  MapMode mapMode = MapMode.WaitingForRequests;
 
   LocationModel() {
     setLocation();
-  }
-
-  void setMapMode(MapMode mode) {
-    if (mode == MapMode.AcceptedRequest) {
-      mapMode = mode;
-      notifyListeners();
-    }
   }
 
   void setLocation() async {
@@ -75,5 +67,3 @@ class LocationModel extends ChangeNotifier {
     });
   }
 }
-
-enum MapMode { WaitingForRequests, AcceptedRequest }
