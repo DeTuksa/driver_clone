@@ -156,6 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .add({
         'message': message,
         'fromId': globalUser.uid,
+        'toId': trip.riderId,
         'timestamp': Timestamp.now()
       });
       print('sent');
