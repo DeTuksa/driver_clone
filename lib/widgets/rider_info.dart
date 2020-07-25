@@ -13,24 +13,18 @@ class RiderInfo extends StatelessWidget {
       width: width(context),
       color: Colors.white,
       child: Center(
-        child: FlatButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24)
-          ),
-          child: Text('Go to Chats', style: TextStyle(
-            color: Colors.white
-          ),),
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-                "chat_screen",
-              arguments: {
-                  'trip': trip
-              }
-            );
-          },
-          color: Colors.black,
-        )
-      ),
+          child: FlatButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Text(
+          'Go to Chats',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          Navigator.of(context)
+              .pushNamed("chat_screen", arguments: {'trip': trip});
+        },
+        color: Colors.black,
+      )),
     );
   }
 }
