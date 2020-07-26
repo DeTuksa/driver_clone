@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver_clone/models/auth_model.dart';
 import 'package:driver_clone/models/location_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -10,36 +11,43 @@ class TripModel extends ChangeNotifier {
   StreamSubscription requestsStream;
   StreamSubscription currentTripStream;
   Trip currentTrip;
+  StreamSubscription authStateStream;
 
   TripModel() {
-    requestsStream = Firestore.instance
-        .collection('drivers')
-        .document(globalUser.uid)
-        .collection("tripRequests")
-        .snapshots()
-        .listen((tripsSnapshot) {
-      requests = new List();
-      tripsSnapshot.documents.forEach((tripSnap) {
-        if (tripSnap.data != null) {
-          requests.add(Trip.fromJson(tripSnap.data, tripSnap.documentID));
-        }
-      });
-      notifyListeners();
-    });
+    authStateStream = FirebaseAuth.instance.onAuthStateChanged.listen((user) {
+      globalUser = user;
+      try {
+        requestsStream = Firestore.instance
+            .collection('drivers')
+            .document(user.uid)
+            .collection("tripRequests")
+            .snapshots()
+            .listen((tripsSnapshot) {
+          requests = new List();
+          tripsSnapshot.documents.forEach((tripSnap) {
+            if (tripSnap.data != null) {
+              requests.add(Trip.fromJson(tripSnap.data, tripSnap.documentID));
+            }
+          });
+          notifyListeners();
+        });
 
-    currentTripStream = Firestore.instance
-        .collection('drivers')
-        .document(globalUser.uid)
-        .collection('currentTrip')
-        .document('tripDetails')
-        .snapshots()
-        .listen((tripSnapshot) {
-      if (tripSnapshot.data == null) {
-        currentTrip = null;
-      } else {
-        currentTrip = Trip.fromJson(tripSnapshot.data, tripSnapshot.documentID);
-      }
-      notifyListeners();
+        currentTripStream = Firestore.instance
+            .collection('drivers')
+            .document(user.uid)
+            .collection('currentTrip')
+            .document('tripDetails')
+            .snapshots()
+            .listen((tripSnapshot) {
+          if (tripSnapshot.data == null) {
+            currentTrip = null;
+          } else {
+            currentTrip =
+                Trip.fromJson(tripSnapshot.data, tripSnapshot.documentID);
+          }
+          notifyListeners();
+        });
+      } catch (err) {}
     });
   }
   void removeRequest(int index) {
@@ -59,6 +67,7 @@ class TripModel extends ChangeNotifier {
   void cancelSubs() {
     requestsStream.cancel();
     currentTripStream.cancel();
+    authStateStream.cancel();
   }
 
   Future<void> acceptsTrip(Trip trip) async {
